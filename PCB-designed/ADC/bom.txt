@@ -1,0 +1,31 @@
+Partlist exported from C:/Users/rboq/Documents/eagle/ADC/raspi_reprap.sch at 12/2/2013 4:26:29 PM
+
+Qty Value          Device           Package                 Parts                                               Description                                               
+6                  JP1E             JP1                     JP1, JP2, JP3, JP4, JP5, JP6                        JUMPER                                                    
+5                  JP2Q             JP2Q                    JP7, JP8, JP9, JP10, JP11                           JUMPER                                                    
+1                  LEDCHIP-LED0805  CHIP-LED0805            LED1                                                LED                                                       
+4                  PMOSFET_NTO220BV TO220BV                 Q1, Q2, Q3, Q4                                      Power MOSFET N-Channel                                    
+2                  R-EU_R0805       R0805                   R2, R16                                             RESISTOR, European symbol                                 
+4   +12            1751248          1751248                 TM, TM1, TM2, TM3                                   MKDS 1/ 2-3,5 Printklemme                                 
+1   0              R-EU_R0805       R0805                   C13                                                 RESISTOR, European symbol                                 
+12  100nF          C-EUC0201        C0201                   C1, C2, C5, C6, C7, C8, C9, C11, C12, C14, C39, C41 CAPACITOR, European symbol                                
+6   100nF          C-EUC0402        C0402                   C16, C17, C19, C20, C21, C22                        CAPACITOR, European symbol                                
+10  100nF          C-EUC0805        C0805                   C29, C30, C31, C32, C33, C34, C35, C36, C37, C38    CAPACITOR, European symbol                                
+3   10uF           C-EUC0201        C0201                   C10, C15, C18                                       CAPACITOR, European symbol                                
+4   10uF           C-EUC0805        C0805                   C40, C42, C43, C44                                  CAPACITOR, European symbol                                
+6   120k           R-EU_R0805       R0805                   R3, R4, R5, R6, R7, R8                              RESISTOR, European symbol                                 
+6   1751248        1751248          1751248                 ANG1, ANG2, ANG3, ANG4, ANG5, ANG6                  MKDS 1/ 2-3,5 Printklemme                                 
+5   1751264        1751264          1751264                 X2, X3, X4, X5, X6                                  MKDS 1/ 4-3,5 Printklemme                                 
+1   1751293        1751293          1751293                 X1                                                  MKDS 1/ 7-3,5 Printklemme                                 
+9   1k             R-EU_R0805       R0805                   R17, R18, R19, R20, R21, R22, R23, R24, R25         RESISTOR, European symbol                                 
+1   1uF            C-EUC0201        C0201                   C4                                                  CAPACITOR, European symbol                                
+6   43             R-EU_R0805       R0805                   R9, R10, R11, R12, R13, R14                         RESISTOR, European symbol                                 
+1   470nF          C-EUC0201        C0201                   C3                                                  CAPACITOR, European symbol                                
+6   470pF          C-EUC0805        C0805                   C23, C24, C25, C26, C27, C28                        CAPACITOR, European symbol                                
+5   A4983CARRIER   A4983CARRIER     A4988BREAKOUT           U$2, U$3, U$4, U$5, U$6                                                                                       
+1   ADS8556IPM     ADS8556IPM       QFP50P1200X1200X160-64N U8                                                  ANALOG-TO-DIGITAL CONVERTERS                              
+1   LM4040D50IDBZR LM4040D50IDBZR   SOT95P237X112-3N        U1                                                  PRECISION MICROPOWER SHUNT VOLTAGE REFERENCE              
+1   MCP23S17-E/SS  MCP23S17-E/SS    SOP65P780X200-28N       U9                                                  IC, 16-Bit I/O Expander with Serial Interface,    SSOP-28 
+6   OPA365AIDBVTG4 OPA365AIDBVTG4   SOT95P280X145-5N        U2, U3, U4, U5, U6, U7                              OPERATIONAL AMPLIFIER                                     
+1   RASPBERRY-PI   RASPBERRY-PI     RASPBERRY-PI            U$1                                                 Raspberry Pi Board                                        
+4   TPB1,27        TPB1,27          B1,27                   TP1, TP2, TP3, TP4                                  Test pad                                                  
