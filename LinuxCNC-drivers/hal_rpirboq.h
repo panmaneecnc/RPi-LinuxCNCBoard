@@ -65,6 +65,9 @@
 
 #define BCM2835_GPEDS0		*(gpio + 16)
 #define BCM2835_GPEDS1		*(gpio + 17)
+
+#define BCM2835_GPAREN0		*(gpio + 31)
+#define BCM2835_GPAREN1		*(gpio + 32)
 #define BCM2835_GPAFEN0		*(gpio + 34)
 #define BCM2835_GPAFEN1		*(gpio + 35)
 
