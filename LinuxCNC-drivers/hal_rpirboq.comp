@@ -106,7 +106,7 @@ EXTRA_SETUP() {
 	/*Setup the board*/
 	setup_gpio();
 	reset_board();
-	//setup_ads8556();
+	setup_ads8556();
 	setup_mcp23s17();	
 
 	return 0;
@@ -421,9 +421,9 @@ static void read_ads8556(void){
 		BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
 
 		BCM2835_SPIFIFO = 0xFF;
-		BCM2835_SPIFIFO = 0x01;
-		BCM2835_SPIFIFO = 0x03;
-		BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
+		BCM2835_SPIFIFO = 0x00;
+		BCM2835_SPIFIFO = 0x00;
+		BCM2835_SPIFIFO = 0x00; // Send the MCP23S17 opcode, chip address, and write bit
 		
 		
 		/* wait until transfer is finished */
@@ -453,24 +453,32 @@ static void read_ads8556(void){
 static void setup_ads8556(void){
 	int i;
 	/* set up SPI */
-	BCM2835_SPICLK = SPICLKDIV_8;
+	BCM2835_SPICLK = SPICLKDIV_32;
 	
 	BCM2835_SPICS |= SPI_CS_CLEAR_RX | SPI_CS_CLEAR_TX;
 	BCM2835_SPICS |= SPI_CS_CS_01|SPI_CS_CPOL;
 	/* clear FIFOs */
 	
+	BCM2835_GPSET0 = (1l << 27);
+	while (!(BCM2835_GPLEV0 & (1l << 27)));
+	
+    while ((BCM2835_GPLEV0 & (1l << 22)));
+	
 	/* activate transfer *///TA=1
 	BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
 
 	BCM2835_SPIFIFO = 0xFF;
-	BCM2835_SPIFIFO = 0x01;
+	BCM2835_SPIFIFO = 0x00;
 	BCM2835_SPIFIFO = 0x03;
 	BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
+	
 	
 	/* wait until transfer is finished */
 	while (!(BCM2835_SPICS & SPI_CS_DONE)){}
 	/* clear DONE bit */ //Clear TA
 	BCM2835_SPICS &=(~SPI_CS_TA);  // CLear ta
+	/*Unactivation of CONV_A GPIO*/
+	BCM2835_GPCLR0 = (1l << 27);
 	
 	BCM2835_SPICS &= (~SPI_CS_CLEAR_RX) & (~SPI_CS_CLEAR_TX) & (~SPI_CS_CS_01) & (~SPI_CS_CPOL);
 
