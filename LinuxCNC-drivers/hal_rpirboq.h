@@ -19,7 +19,9 @@
 #define PICNC_H
 
 #define SPICLKDIV_8		8	/* ~31.25MHz */
+#define SPICLKDIV_16	16	/* 15.625MHz */
 #define SPICLKDIV_32	32	/* ~7.8125MHz */
+#define SPICLKDIV_64	64	/* ~3.90625MHz */
 
 #define NUMAXES			4		/* X Y Z A */
 
@@ -62,10 +64,12 @@
 #define BCM2835_GPCLR1		*(gpio + 11)
 #define BCM2835_GPLEV0		*(gpio + 13)
 #define BCM2835_GPLEV1		*(gpio + 14)
-
 #define BCM2835_GPEDS0		*(gpio + 16)
 #define BCM2835_GPEDS1		*(gpio + 17)
-
+#define BCM2835_GPREN0		*(gpio + 19)
+#define BCM2835_GPREN1		*(gpio + 20)
+#define BCM2835_GPFEN0		*(gpio + 22)
+#define BCM2835_GPFEN1		*(gpio + 23)
 #define BCM2835_GPAREN0		*(gpio + 31)
 #define BCM2835_GPAREN1		*(gpio + 32)
 #define BCM2835_GPAFEN0		*(gpio + 34)

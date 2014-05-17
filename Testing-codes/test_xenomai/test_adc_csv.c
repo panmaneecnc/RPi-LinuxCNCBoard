@@ -47,7 +47,7 @@ void adc(void *arg)
 		
 		/*Obtaining the time*/
 		now=  rt_timer_read();
-		canales=readAllChannels(&cra);
+		canales=readAllChannels(&cr);
 		fprintf(fp,"\n%d",i+1);
 		fprintf(fp,",%f", (long)(now-start)/1000000);
 		fprintf(fp,",%d,%d,%d,%d,%d,%d", *(canales), *(canales+1), *(canales+2), *(canales+3), *(canales+4), *(canales+5)); 

@@ -1,7 +1,7 @@
 ##### CONFIGURATION ######
 
 ### List of applications to be build
-APPLICATIONS = test_adc_csv.c
+APPLICATIONS = test_adc_csv
 
 ### Note: to override the search path for the xeno-config script, use "make XENO=..."
 
@@ -32,7 +32,7 @@ endif
 
 CC=$(shell $(XENOCONFIG) --cc)
 
-CPPFLAGS= -I/home/pi/emc2-dev-0ba53e8/src/hal/drivers/rpi_rboq/test -I/home/pi/Proyecto/bcm2835-1.36/src  $(shell $(XENOCONFIG) --skin=native --cflags) ads8556.c /home/pi/Proyecto/bcm2835-1.36/src/bcm2835.c $(MY_CFLAGS) 
+CPPFLAGS= -I/home/pi/emc2-dev-0ba53e8/src/hal/drivers/rpi_rboq/test -I/home/pi/emc2-dev-0ba53e8/src/hal/drivers/rpi_rboq/libs -I/home/pi/bcm2835-1.36/src  $(shell $(XENOCONFIG) --skin=native --cflags) ads8556.c /home/pi/Proyecto/bcm2835-1.36/src/bcm2835.c $(MY_CFLAGS) 
 
 LDFLAGS=$(MY_LDFLAGS) 
 LDLIBS=$(shell $(XENOCONFIG) --skin=native --ldflags)

@@ -106,7 +106,7 @@ EXTRA_SETUP() {
 	/*Setup the board*/
 	setup_gpio();
 	reset_board();
-	setup_ads8556();
+	//setup_ads8556();
 	setup_mcp23s17();	
 
 	return 0;
@@ -187,7 +187,7 @@ FUNCTION(read_rpirboq) {
 	// FAlta arreglar formatos 
 	for(b=0;b<6;b++){
 		chanel_hex=((u32)rxBuf[b*2]*256)+(u32)rxBuf[(2*b)+1];
-		analog_values(b)=(float)((5.0/65536)* (0.5+chanel_hex));
+		analog_values(b)=(float)((50.0/65536)* (0.5+chanel_hex));
 	}
 	
 }
@@ -351,13 +351,13 @@ void reset_board() {
 	//Ver si esto afecta/* GPIO 7 is configured as a tri-state output pin */
 
 	/* ADC reset is active high , MCP active low*/
-	for (i = 0; i < 0x10000; i++) {
+	for (i = 0; i < 0x1000; i++) {
 		BCM2835_GPSET0 = (1l << 4);
 		BCM2835_GPCLR0 = (1l << 25);
 	}
 
 	/* wait until the board is ready */
-	for (i = 0; i < 0x300000; i++) {
+	for (i = 0; i < 0x30000; i++) {
 		BCM2835_GPCLR0 = (1l << 4);
 		BCM2835_GPSET0 = (1l << 25);
 		BCM2835_GPSET0 = (1l << 17);
@@ -391,16 +391,28 @@ static void write_mcp23s17(char data, char reg) {
 static void read_ads8556(void){
 	char *buf;
 	int i, j, b;
+	/*  */
+	//BCM2835_GPFEN0 = (1l << 22);
+	
 	/* set up SPI */
-	BCM2835_SPICLK = SPICLKDIV_8;
+	BCM2835_SPICLK = SPICLKDIV_32;
 	
 	BCM2835_SPICS |= SPI_CS_CLEAR_RX | SPI_CS_CLEAR_TX | SPI_CS_CS_01|SPI_CS_CPOL;
-	/* clear FIFOs */
+	
 	
 	/*Activation of CONV_A GPIO*/
 	BCM2835_GPSET0 = (1l << 27);
+	while (!(BCM2835_GPLEV0 & (1l << 27)));
 	
-	for(i=0; i<500000;i++){} 
+    while ((BCM2835_GPLEV0 & (1l << 22)));
+	
+
+	//while (!BCM2835_GPEDS0){
+		
+
+	//}
+	
+	//BCM2835_GPEDS0=(1l << 22);
 		
 	for(i=0;i<3;i++){
 		
@@ -419,11 +431,11 @@ static void read_ads8556(void){
 		/* clear DONE bit */ //Clear TA
 		BCM2835_SPICS &=(~SPI_CS_TA);  // CLear ta
 		/* read buffer */
-		for(j=0; j<1000; j++){}
+		//for(j=0; j<1000; j++){}
 		//buf = (char *) rxBuf;
 		for (j = 0; j < 4; j++){
 			rxBuf[(i*2)+j] = BCM2835_SPIFIFO;
-			//printf("rxBuf : %x\n",rxBuf[(i*2)+j] );
+			//printf("rxBuf %d: %x\n",(i*2)+j,rxBuf[(i*2)+j] );
 
 		}
 		
@@ -473,51 +485,51 @@ static void setup_mcp23s17(void) {
 	BCM2835_SPICS |= SPI_CS_CLEAR_RX | SPI_CS_CLEAR_TX;
 	BCM2835_SPICS |= SPI_CS_TA;
 
-	BCM2835_SPIFIFO= OPCODEW;             // Send the MCP23S17 opcode, chip address, and write bit
-	BCM2835_SPIFIFO= IODIRA;                                   // Send the register we want to write
-	BCM2835_SPIFIFO= 0x00;     
+	BCM2835_SPIFIFO= OPCODEW;           
+	BCM2835_SPIFIFO= IODIRA;            // We are going to write in the IODIRA register  
+	BCM2835_SPIFIFO= 0x00;     			// All the PORTA works as output	
 	
 	/* wait until transfer is finished */
 	while (!(BCM2835_SPICS & SPI_CS_DONE));
 
 	/* clear DONE bit */ //Clear TA
-	//BCM2835_SPICS &=(~SPI_CS_TA);
+	BCM2835_SPICS &=(~SPI_CS_TA);
 	
 	BCM2835_SPICS |= SPI_CS_TA;
 
-	BCM2835_SPIFIFO= OPCODEW;             // Send the MCP23S17 opcode, chip address, and write bit
-	BCM2835_SPIFIFO= IODIRB;                                   // Send the register we want to write
-	BCM2835_SPIFIFO= 0x00;     
+	BCM2835_SPIFIFO= OPCODEW;             
+	BCM2835_SPIFIFO= IODIRB;              // We are going to write in the IODIRA register
+	BCM2835_SPIFIFO= 0x00;    			  // All the PORTB works as output		 
 	
 	/* wait until transfer is finished */
 	while (!(BCM2835_SPICS & SPI_CS_DONE));
 
 	/* clear DONE bit */ //Clear TA
-	//BCM2835_SPICS &=(~SPI_CS_TA);
+	BCM2835_SPICS &=(~SPI_CS_TA);
 	
 	BCM2835_SPICS |= SPI_CS_TA;
 
-	BCM2835_SPIFIFO= OPCODEW;             // Send the MCP23S17 opcode, chip address, and write bit
-	BCM2835_SPIFIFO= GPPUA;                                   // Send the register we want to write
-	BCM2835_SPIFIFO= 0xFF;     
+	BCM2835_SPIFIFO= OPCODEW;             
+	BCM2835_SPIFIFO= GPPUA;               // We are going to write in the GPPUA register
+	BCM2835_SPIFIFO= 0xFF;     			  // We habilitate the 100k weak pull-up resistor in PORTA.	
 	
 	/* wait until transfer is finished */
 	while (!(BCM2835_SPICS & SPI_CS_DONE));
 
 	/* clear DONE bit */ //Clear TA
-	//BCM2835_SPICS &=(~SPI_CS_TA);
+	BCM2835_SPICS &=(~SPI_CS_TA);
 	
 	BCM2835_SPICS |= SPI_CS_TA;
 
-	BCM2835_SPIFIFO= OPCODEW;             // Send the MCP23S17 opcode, chip address, and write bit
-	BCM2835_SPIFIFO= GPPUB;                                   // Send the register we want to write
-	BCM2835_SPIFIFO= 0xFF;     
+	BCM2835_SPIFIFO= OPCODEW;            
+	BCM2835_SPIFIFO= GPPUB;              // We are going to write in the GPPUA register                     
+	BCM2835_SPIFIFO= 0xFF;     			 // We habilitate the 100k weak pull-up resistor in PORTB.	
 	
 	/* wait until transfer is finished */
 	while (!(BCM2835_SPICS & SPI_CS_DONE));
 
 	/* clear DONE bit */ //Clear TA
-	//BCM2835_SPICS &=(~SPI_CS_TA);
+	BCM2835_SPICS &=(~SPI_CS_TA);
 
 	BCM2835_SPICS &= (~SPI_CS_CLEAR_RX) & (~SPI_CS_CLEAR_TX);
 	
