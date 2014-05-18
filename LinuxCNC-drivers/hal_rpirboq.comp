@@ -187,7 +187,7 @@ FUNCTION(read_rpirboq) {
 	// FAlta arreglar formatos 
 	for(b=0;b<6;b++){
 		chanel_hex=((u32)rxBuf[b*2]*256)+(u32)rxBuf[(2*b)+1];
-		analog_values(b)=(float)((5.0/65536)* (0.5+chanel_hex));
+		analog_values(b)=(float)((50.0/65536)* (0.5+chanel_hex));
 	}
 	
 }
@@ -451,7 +451,7 @@ static void read_ads8556(void){
 }
 
 static void setup_ads8556(void){
-	int i,j;
+	int i;
 	/* set up SPI */
 	BCM2835_SPICLK = SPICLKDIV_32;
 	
@@ -464,33 +464,19 @@ static void setup_ads8556(void){
 	
     while ((BCM2835_GPLEV0 & (1l << 22)));
 	
-	for(i=0;i<3;i++){
-		
-		
-		/* activate transfer *///TA=1
-		BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
+	/* activate transfer *///TA=1
+	BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
 
-		BCM2835_SPIFIFO = 0xFF;
-		BCM2835_SPIFIFO = 0x02;
-		BCM2835_SPIFIFO = 0x03;
-		BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
-		
-		
-		/* wait until transfer is finished */
-		while (!(BCM2835_SPICS & SPI_CS_DONE)){}
-		/* clear DONE bit */ //Clear TA
-		BCM2835_SPICS &=(~SPI_CS_TA);  // CLear ta
-		/* read buffer */
-		//for(j=0; j<1000; j++){}
-		//buf = (char *) rxBuf;
-		for (j = 0; j < 4; j++){
-			rxBuf[(i*2)+j] = BCM2835_SPIFIFO;
-			//printf("rxBuf %d: %x\n",(i*2)+j,rxBuf[(i*2)+j] );
-
-		}
-		
-		
-	}
+	BCM2835_SPIFIFO = 0xFF;
+	BCM2835_SPIFIFO = 0x00;
+	BCM2835_SPIFIFO = 0x03;
+	BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
+	
+	
+	/* wait until transfer is finished */
+	while (!(BCM2835_SPICS & SPI_CS_DONE)){}
+	/* clear DONE bit */ //Clear TA
+	BCM2835_SPICS &=(~SPI_CS_TA);  // CLear ta
 	/*Unactivation of CONV_A GPIO*/
 	BCM2835_GPCLR0 = (1l << 27);
 	
