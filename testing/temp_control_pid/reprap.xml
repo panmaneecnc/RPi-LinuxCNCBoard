@@ -1,0 +1,60 @@
+<pyvcp>
+<vbox>
+    <labelframe text="Heater-Control">
+    <font>("Helvetica",16)</font>
+        <vbox>
+		<labelframe text="Measured voltage">
+			<number> 
+		    		<halpin>"temp-volt"</halpin>
+		    		<font>("Helvetica",24)</font>
+		    		<format>"3.3f"</format>
+			</number>
+		</labelframe> 
+
+		<labelframe text="Voltage set-point">
+			<scale>
+			    <font>("Helvetica",16)</font>
+			    <width>"25"</width>
+			    <halpin>"temp-setpoint"</halpin>
+			    <resolution>0.01</resolution>
+			    <orient>HORIZONTAL</orient>
+			    <initval>5</initval>
+			    <min_>0</min_>
+			    <max_>5</max_>
+			</scale>
+			<checkbutton>
+			    <halpin>"pid-enable"</halpin>
+			    <text>"PID on/off"</text>
+			</checkbutton>
+		</labelframe> 
+
+		<labelframe text="PID output">
+			<number> 
+		    		<halpin>"pid-out"</halpin>
+		    		<font>("Helvetica",24)</font>
+		    		<format>"4.2f"</format>
+			</number>
+		</labelframe> 
+		<labelframe text="PWM dutycycle">
+			<number> 
+		    		<halpin>"dutycycle"</halpin>
+		    		<font>("Helvetica",24)</font>
+		    		<format>"1.3f"</format>
+
+			</number>
+		</labelframe> 
+
+
+		
+
+        </vbox>
+        
+    </labelframe>
+
+    <labelframe text="Extruder-Control">
+  
+
+
+    </labelframe>   
+</vbox>
+</pyvcp>

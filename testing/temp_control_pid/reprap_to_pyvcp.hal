@@ -1,0 +1,10 @@
+
+
+net temp_volt pyvcp.temp-volt 
+
+net setpoint pid.0.command pyvcp.temp-setpoint-f
+net pidout pyvcp.pid-out
+net pidena pid.0.enable pyvcp.pid-enable
+net pidena pwmgen.0.enable
+
+net duty pwmgen.0.curr-dc pyvcp.dutycycle

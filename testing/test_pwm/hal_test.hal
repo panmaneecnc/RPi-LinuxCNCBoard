@@ -1,0 +1,25 @@
+loadrt threads name1=fast period1=100000 name2=slow period2=100000000
+
+loadrt hal_rpirboq
+loadrt pwmgen output_type=0
+
+loadusr -Wn servopyvcp pyvcp -g 700x80+50+50 -c servopyvcp pwmtest.xml
+
+addf rpirboq.update-rpirboq fast
+addf pwmgen.update slow 
+addf pwmgen.make-pulses fast
+
+setp pwmgen.0.scale 1 
+setp pwmgen.0.pwm-freq 100 
+setp pwmgen.0.dither-pwm 0 
+setp pwmgen.0.max-dc 0.99
+setp pwmgen.0.min-dc 0.01
+setp pwmgen.0.offset 0
+setp pwmgen.0.enable TRUE
+
+net PWMcmd servopyvcp.anaout-f pwmgen.0.value
+net PWMout pwmgen.0.pwm rpirboq.pwm.1.control
+
+loadusr	halscope
+
+start

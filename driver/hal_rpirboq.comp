@@ -183,13 +183,78 @@ FUNCTION(read_rpirboq) {
 	/* yes, read the data port */
 	/* Read data*/
 	
-	read_ads8556();
-	// FAlta arreglar formatos 
-	for(b=0;b<6;b++){
-		chanel_hex=((u32)rxBuf[b*2]*256)+(u32)rxBuf[(2*b)+1];
-		analog_values(b)=(float)((50.0/65536)* (0.5+chanel_hex));
+	//read_ads8556();
+	char *buf; 
+	char byte1;
+	char byte2;
+	char byte3;
+	char byte4;
+	
+	int i, j;
+	/*  */
+	//BCM2835_GPFEN0 = (1l << 22);
+	
+	/* set up SPI */
+	BCM2835_SPICLK = SPICLKDIV_16;
+	
+	BCM2835_SPICS |= SPI_CS_CLEAR_RX | SPI_CS_CLEAR_TX | SPI_CS_CS_01|SPI_CS_CPOL;
+	
+	
+	/*Activation of CONV_A GPIO*/
+	BCM2835_GPSET0 = (1l << 27);
+	
+	/*Waiting for CONV and BUSY to complete*/
+	while (!(BCM2835_GPLEV0 & (1l << 27)));
+	while ((BCM2835_GPLEV0 & (1l << 22)));
+	
+	for(i=0;i<3;i++){
+		
+		BCM2835_SPICS |= SPI_CS_CLEAR_RX | SPI_CS_CLEAR_TX;
+		/* activate transfer *///TA=1
+		BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
+
+		BCM2835_SPIFIFO = 0xFE;
+		BCM2835_SPIFIFO = 0x01;
+		BCM2835_SPIFIFO = 0x03;
+		BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
+		
+		
+		/* wait until transfer is finished */
+		while (!(BCM2835_SPICS & SPI_CS_DONE)){}
+		/* clear DONE bit */ //Clear TA
+		BCM2835_SPICS &=(~SPI_CS_TA);  // CLear ta
+	
+		byte1= BCM2835_SPIFIFO;
+		byte2= BCM2835_SPIFIFO;
+		byte3= BCM2835_SPIFIFO;
+		byte4= BCM2835_SPIFIFO;
+        
+		switch(i){
+			case 0:
+				analog_values(0)= (float)((5.0/65536)* (0.5+(((u32)byte1*256)+(u32)byte2)));
+				analog_values(1)= (float)((5.0/65536)* (0.5+(((u32)byte3*256)+(u32)byte4)));
+			break;
+			case 1:
+				analog_values(2)= (float)((5.0/65536)* (0.5+(((u32)byte1*256)+(u32)byte2)));
+				analog_values(3)= (float)((5.0/65536)* (0.5+(((u32)byte3*256)+(u32)byte4)));
+			break;
+			case 2:
+			    analog_values(4)= (float)((5.0/65536)* (0.5+(((u32)byte1*256)+(u32)byte2)));
+				analog_values(5)= (float)((5.0/65536)* (0.5+(((u32)byte3*256)+(u32)byte4)));
+			break;
+			default:
+			break;
+		}
+			
 	}
 	
+	 /*Unactivation of CONV_A GPIO*/
+	BCM2835_GPCLR0 = (1l << 27);
+
+	//unsigned aux;
+	/* split the bits into 16 variables (8 regular, 8 inverted) */
+	BCM2835_SPICS &= (~SPI_CS_CLEAR_RX) & (~SPI_CS_CLEAR_TX) & (~SPI_CS_CS_01) & (~SPI_CS_CPOL);
+	//printf("BCMSPIC: %x\n",BCM2835_SPICS );
 }
 
 int map_gpio() {
@@ -420,10 +485,10 @@ static void read_ads8556(void){
 		/* activate transfer *///TA=1
 		BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
 
-		BCM2835_SPIFIFO = 0xFF;
-		BCM2835_SPIFIFO = 0x00;
-		BCM2835_SPIFIFO = 0x00;
-		BCM2835_SPIFIFO = 0x00; // Send the MCP23S17 opcode, chip address, and write bit
+		BCM2835_SPIFIFO = 0xFE;
+		BCM2835_SPIFIFO = 0x01;
+		BCM2835_SPIFIFO = 0x03;
+		BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
 		
 		
 		/* wait until transfer is finished */
@@ -468,7 +533,7 @@ static void setup_ads8556(void){
 	BCM2835_SPICS |= SPI_CS_TA ; /*SPI Mode 2, CS1*/
 
 	BCM2835_SPIFIFO = 0xFF;
-	BCM2835_SPIFIFO = 0x00;
+	BCM2835_SPIFIFO = 0x01;
 	BCM2835_SPIFIFO = 0x03;
 	BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
 	
