@@ -31,7 +31,6 @@ pin in bit servo.#.control [10] = 0 "Steppers control pins for rpi-rboq board. 0
 pin in bit enable_mot =0 "Enable motors signal.";
 pin in bit pwm.#.control [4] = 0 "PWM output pins for rpi-rboq board. 0: PWM1, 1: PWM2, 2: PWM3, 3: PWM4";
 pin out float analog.#.values [6] =0.0"Analog inputs readed by the ADS8556 (in Volts). 0: CHA_0 , 1: CHA_1, 2: CHB_0 , 3: CHB_1, 4: CHC_0 , 5: CHC_1.";
-pin out float temp.#.thermistor [6]=0.0 "Analogue outputs read by the ADS8556 (in ºC).";
 
 
 function update_rpirboq nofp "Update the signals values: servo.i.control, enable_mot, pwm.i.control.";
@@ -127,7 +126,6 @@ FUNCTION(update_rpirboq) {
 	char reset_v;
 	out = 0x00;
 	mask = 0x80;
-	//printf("In write_port\n");
 	int b;
 	/* assemble output byte for data port from 8 source variables */
 	for (b = 0; b < 8; b++) {
@@ -178,12 +176,7 @@ FUNCTION(update_rpirboq) {
 FUNCTION(read_rpirboq) {
 	u32 b;
 	u32 chanel_hex;
-	/* are we using the data port for input? */
-	//if (_data_dir != 0) {
-	/* yes, read the data port */
-	/* Read data*/
 	
-	//read_ads8556();
 	char *buf; 
 	char byte1;
 	char byte2;
@@ -191,9 +184,7 @@ FUNCTION(read_rpirboq) {
 	char byte4;
 	
 	int i, j;
-	/*  */
-	//BCM2835_GPFEN0 = (1l << 22);
-	
+		
 	/* set up SPI */
 	BCM2835_SPICLK = SPICLKDIV_16;
 	
@@ -216,7 +207,7 @@ FUNCTION(read_rpirboq) {
 		BCM2835_SPIFIFO = 0xFE;
 		BCM2835_SPIFIFO = 0x01;
 		BCM2835_SPIFIFO = 0x03;
-		BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
+		BCM2835_SPIFIFO = 0xFF; // Send the Control register value
 		
 		
 		/* wait until transfer is finished */
@@ -231,7 +222,7 @@ FUNCTION(read_rpirboq) {
         
 		switch(i){
 			case 0:
-				analog_values(0)= (float)((5.0/65536)* (0.5+(((u32)byte1*256)+(u32)byte2)));
+				analog_values(0)= (float)((5.0/65536)* (0.5+(((u32)byte1*256)+(u32)byte2))); 
 				analog_values(1)= (float)((5.0/65536)* (0.5+(((u32)byte3*256)+(u32)byte4)));
 			break;
 			case 1:
@@ -471,14 +462,7 @@ static void read_ads8556(void){
 	
     while ((BCM2835_GPLEV0 & (1l << 22)));
 	
-
-	//while (!BCM2835_GPEDS0){
-		
-
-	//}
 	
-	//BCM2835_GPEDS0=(1l << 22);
-		
 	for(i=0;i<3;i++){
 		
 		
@@ -488,7 +472,7 @@ static void read_ads8556(void){
 		BCM2835_SPIFIFO = 0xFE;
 		BCM2835_SPIFIFO = 0x01;
 		BCM2835_SPIFIFO = 0x03;
-		BCM2835_SPIFIFO = 0xFF; // Send the MCP23S17 opcode, chip address, and write bit
+		BCM2835_SPIFIFO = 0xFF; // Send the CR code
 		
 		
 		/* wait until transfer is finished */
@@ -496,11 +480,10 @@ static void read_ads8556(void){
 		/* clear DONE bit */ //Clear TA
 		BCM2835_SPICS &=(~SPI_CS_TA);  // CLear ta
 		/* read buffer */
-		//for(j=0; j<1000; j++){}
-		//buf = (char *) rxBuf;
+		
 		for (j = 0; j < 4; j++){
 			rxBuf[(i*2)+j] = BCM2835_SPIFIFO;
-			//printf("rxBuf %d: %x\n",(i*2)+j,rxBuf[(i*2)+j] );
+			
 
 		}
 		
@@ -509,10 +492,9 @@ static void read_ads8556(void){
     /*Unactivation of CONV_A GPIO*/
 	BCM2835_GPCLR0 = (1l << 27);
 
-	//unsigned aux;
 	/* split the bits into 16 variables (8 regular, 8 inverted) */
 	BCM2835_SPICS &= (~SPI_CS_CLEAR_RX) & (~SPI_CS_CLEAR_TX) & (~SPI_CS_CS_01) & (~SPI_CS_CPOL);
-	//printf("BCMSPIC: %x\n",BCM2835_SPICS );
+	
 }
 
 static void setup_ads8556(void){
