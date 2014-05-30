@@ -1,0 +1,1 @@
+To compile the test, you have to invoke the MAKEFILE using the command make.

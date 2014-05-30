@@ -1,0 +1,1 @@
+To use these libraries you need the bcm2835 library, avaiable from here: http://www.airspayce.com/mikem/bcm2835/index.html
